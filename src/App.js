@@ -81,7 +81,7 @@ class App extends Component {
                 onChange={this.handleChange}
                 onCreate={this.handleCreate}
             />)}
-                palette={<Palette color={this.colorList} onChange={this.handleColorChange}/>}
+                palette={<Palette color={this.colorList} selectedColor={color} onChange={this.handleColorChange}/>}
             >
                 <TodoItemList todos={todos} onToggle={this.handleToggle} onRemove={this.handleRemove}/>
             </TodoListTemplate>
