@@ -6,7 +6,6 @@ class Palette extends Component{
 
     constructor(props) {
         super(props);
-
         this.colorItems = props.color.map(
             (colorItem,index) => ({
                 "color":colorItem,

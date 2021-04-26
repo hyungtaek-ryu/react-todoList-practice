@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import {connect} from "react-redux";
+import {insertTodo, updateColor, updateText,deleteTodo,updateTodo} from "./actions/actions";
 import TodoListTemplate from "./components/TodoListTemplate";
 import Form from "./components/Form"
 import TodoItemList from "./components/TodoItemList";
@@ -7,23 +9,15 @@ import Palette from "./components/Palette";
 class App extends Component {
     id = 0
     colorList = ['#343a40', '#f03e3e', '#12b886', '#228ae6']
-    state = {
-        input : '',
-        color : '',
-        todos : [
-
-        ]
-    }
 
     handleRemove = (id) => {
-        const {todos} = this.state;
-        this.setState({
-            todos: todos.filter(todo => todo.id !== id)
-        });
+        const {dispatch} = this.props;
+        dispatch(deleteTodo(id))
     }
 
     handleToggle = (id) => {
-        const {todos} = this.state;
+        const {dispatch} = this.props;
+        const {todos} = this.props.state.todoList;
         const index = todos.findIndex(todo => todo.id ===id); //파라미터로 받은 id가 몇 번째 아이템인지..
 
         const nextTodos = [...todos]; //배열을 복사.
@@ -34,29 +28,26 @@ class App extends Component {
             ...selected,
             checked: !selected.checked
         };
-        this.setState({
-            todos:nextTodos
-        });
+
+        dispatch(updateTodo(nextTodos));
     }
 
     handleChange = (e) => {
-        this.setState({
-            input: e.target.value
-        });
+        const {dispatch} = this.props;
+        dispatch(updateText(e.target.value))
     }
 
     handleCreate = () => {
-        const { input,color, todos} = this.state;
-        this.setState({
-            input: '',
-            color:'',
-            todos: todos.concat({
-                id: this.id++,
-                text: input,
-                checked: false,
-                color: color
-            })
-        })
+        const {dispatch} = this.props;
+
+        dispatch(insertTodo({
+            id: this.id++,
+            text: this.props.state.todoList.input,
+            checked: false,
+            color: this.props.state.todoList.color
+        }));
+
+        dispatch(updateText(''));
     }
 
     handleKeyPress = (e) => {
@@ -66,13 +57,13 @@ class App extends Component {
     }
 
     handleColorChange = (e) => {
-        this.setState({
-            color : e.target.dataset.color
-        })
+       const {dispatch} = this.props;
+       dispatch(updateColor(e.target.dataset.color))
     }
 
     render(){
-        const {input,color,todos} = this.state;
+        //const {input,color,todos} = this.state;  아래와 같이 리덕스에서 관리하는 state로 변경.
+        const {input,color,todos} = this.props.state.todoList;
         return(
             <TodoListTemplate form={(<Form
                 value={input}
@@ -89,4 +80,11 @@ class App extends Component {
     }
 }
 
-export default App;
+function select(state) {
+    return {
+        state
+    }
+}
+
+//provider 태그의 store 와 연결.
+export default connect(select)(App);
