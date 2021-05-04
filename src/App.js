@@ -23,24 +23,7 @@ class App extends Component {
 
     handleToggle = (id) => {
         const {dispatch} = this.props;
-        const {todos} = this.props.state.todoList;
-
-        const index = todos.findIndex(todo => todo.id ===id); //파라미터로 받은 id가 몇 번째 아이템인지..
-
-        const nextTodos = [...todos]; //배열을 복사.
-        const selected = todos[index];
-
-        //기존의 값들을 복사하고, checked 값을 덮어쓰기
-        nextTodos[index] = {
-            ...selected,
-            checked: !selected.checked
-        };
-
-        const data = {
-            index : index,
-            todos : nextTodos
-        }
-
+        const data = {id : id};
         dispatch(fetchPost('/todoList/update',data))
     }
 
@@ -51,22 +34,7 @@ class App extends Component {
 
     handleCreate = () => {
         const {dispatch} = this.props;
-
-        let todos = [...this.props.state.todoList.todos];
-        let id = 0;
-
-        if(todos.length>0){
-            id = todos[todos.length-1].id;
-        }
-
-        const data  = {
-            id : ++id,
-            text: this.props.state.todoList.input,
-            checked: false,
-            color: this.props.state.todoList.color
-        }
-
-        dispatch(fetchPost('/todoList/insert',data))
+        dispatch(fetchPost('/todoList/insert'))
     }
 
     handleKeyPress = (e) => {
